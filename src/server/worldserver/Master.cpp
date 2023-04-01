@@ -426,7 +426,7 @@ int Master::Run()
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "   / /\\ \\ / __| '_ \\| '__/ _` | '_ \\| |    / _ \\| '__/ _ \\ ");
     sLog->outInfo(LOG_FILTER_WORLDSERVER, "  / ____ \\\\__ | | | | | | (_| | | | | |___| (_) | | |  __/     ");
     sLog->outInfo(LOG_FILTER_WORLDSERVER, " /_/    \\_|___|_| |_|_|  \\__,_|_| |_|\\_____\\___/|_|  \\___|  ");
-    sLog->outInfo(LOG_FILTER_WORLDSERVER, " MILLENIUM STUDIO SARL\n");
+    sLog->outInfo(LOG_FILTER_WORLDSERVER, " INNA HOOVER BROWN STUDIO SARL\n");
 
     /// worldserver PID file creation
     std::string pidfile = ConfigMgr::GetStringDefault("PidFile", "");

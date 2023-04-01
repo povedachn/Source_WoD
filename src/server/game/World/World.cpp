@@ -4411,7 +4411,7 @@ void World::_updateTransfers()
                     {
                         l_Error = false;
 
-                        CharacterDatabase.PExecute("DELETE FROM group_member WHERE memberGuid = '%u'", l_CharGUID);
+                        CharacterDatabase.PExecute("DELETE FROM parties_members WHERE memberGuid = '%u'", l_CharGUID);
                         CharacterDatabase.PExecute("DELETE FROM guild_member WHERE guid = '%u'", l_CharGUID);
                         CharacterDatabase.PExecute("UPDATE characters SET deleteInfos_Name=name, deleteInfos_Account=account, deleteDate='" UI64FMTD "', name='', account=0 WHERE guid=%u", uint64(time(NULL)), l_CharGUID);
                     }
