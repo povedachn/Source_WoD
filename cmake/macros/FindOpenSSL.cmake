@@ -1,3 +1,8 @@
+#
+# This file is part of Project SkyFire https://www.projectskyfire.org. 
+# See COPYRIGHT file for Copyright information
+#
+
 # - Try to find the OpenSSL encryption library
 # Once done this will define
 #
@@ -33,6 +38,7 @@ SET(_OPENSSL_ROOT_HINTS
 IF(PLATFORM EQUAL 64)
   SET(_OPENSSL_ROOT_PATHS
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (64-bit)_is1;InstallLocation]"
+    "C:/Program Files/OpenSSL-Win64/"
     "C:/OpenSSL-Win64/"
     "C:/OpenSSL/"
   )
@@ -40,6 +46,8 @@ ELSE()
   SET(_OPENSSL_ROOT_PATHS
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;InstallLocation]"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OpenSSL (32-bit)_is1;InstallLocation]"
+    "C:/Program Files/OpenSSL-Win32/"
+    "C:/OpenSSL-Win32/"
     "C:/OpenSSL/"
   )
 ENDIF()
@@ -77,73 +85,73 @@ IF(WIN32 AND NOT CYGWIN)
     # libeay32MD.lib is identical to ../libeay32.lib, and
     # ssleay32MD.lib is identical to ../ssleay32.lib
 
-    FIND_LIBRARY(LIB_EAY_DEBUG
+    FIND_LIBRARY(OPENSSL_LIB_CRYPTO_DEBUG
       NAMES
-        libeay32MDd libeay32
+        libcrypto32MDd libcrypto32 libcrypto64MDd libcrypto64
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
-    FIND_LIBRARY(LIB_EAY_RELEASE
+    FIND_LIBRARY(OPENSSL_LIB_CRYPTO_RELEASE
       NAMES
-        libeay32MD libeay32
+        libcrypto32MD libcrypto32 libcrypto64MD libcrypto64
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
-    FIND_LIBRARY(SSL_EAY_DEBUG
+    FIND_LIBRARY(OPENSSL_LIB_SSL_DEBUG
       NAMES
-        ssleay32MDd ssleay32 ssl
+        libssl32MDd libssl32 ssl libssl64MDd libssl64
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
-    FIND_LIBRARY(SSL_EAY_RELEASE
+    FIND_LIBRARY(OPENSSL_LIB_SSL_RELEASE
       NAMES
-        ssleay32MD ssleay32 ssl
+        libssl32MD libssl32 ssl libssl libssl64MD libssl64
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
     if( CMAKE_CONFIGURATION_TYPES OR CMAKE_BUILD_TYPE )
       set( OPENSSL_LIBRARIES
-        optimized ${SSL_EAY_RELEASE} ${LIB_EAY_RELEASE}
-        debug ${SSL_EAY_DEBUG} ${LIB_EAY_DEBUG}
+        optimized ${OPENSSL_LIB_SSL_RELEASE} ${OPENSSL_LIB_CRYPTO_RELEASE}
+        debug ${OPENSSL_LIB_SSL_DEBUG} ${OPENSSL_LIB_CRYPTO_DEBUG}
       )
     else()
       set( OPENSSL_LIBRARIES
-        ${SSL_EAY_RELEASE}
-        ${LIB_EAY_RELEASE}
+        ${OPENSSL_LIB_SSL_RELEASE}
+        ${OPENSSL_LIB_CRYPTO_RELEASE}
       )
     endif()
 
-    MARK_AS_ADVANCED(SSL_EAY_DEBUG SSL_EAY_RELEASE LIB_EAY_DEBUG LIB_EAY_RELEASE)
+    MARK_AS_ADVANCED(OPENSSL_LIB_SSL_DEBUG OPENSSL_LIB_SSL_RELEASE OPENSSL_LIB_CRYPTO_DEBUG OPENSSL_LIB_CRYPTO_RELEASE)
   ELSEIF(MINGW)
 
     # same player, for MingW
-    FIND_LIBRARY(LIB_EAY
+    FIND_LIBRARY(OPENSSL_LIB_CRYPTO
       NAMES
         libeay32
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/MinGW
     )
 
-    FIND_LIBRARY(SSL_EAY NAMES
+    FIND_LIBRARY(OPENSSL_LIB_SSL NAMES
       NAMES
         ssleay32
       PATHS
         ${OPENSSL_ROOT_DIR}/lib/MinGW
     )
 
-    MARK_AS_ADVANCED(SSL_EAY LIB_EAY)
+    MARK_AS_ADVANCED(OPENSSL_LIB_SSL OPENSSL_LIB_CRYPTO)
 
     set( OPENSSL_LIBRARIES
-      ${SSL_EAY}
-      ${LIB_EAY}
+      ${OPENSSL_LIB_SSL}
+      ${OPENSSL_LIB_CRYPTO}
     )
   ELSE(MSVC)
     # Not sure what to pick for -say- intel, let's use the toplevel ones and hope someone report issues:
-    FIND_LIBRARY(LIB_EAY
+    FIND_LIBRARY(OPENSSL_LIB_CRYPTO
       NAMES
         libeay32
       PATHS
@@ -151,26 +159,20 @@ IF(WIN32 AND NOT CYGWIN)
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
 
-    FIND_LIBRARY(SSL_EAY
+    FIND_LIBRARY(OPENSSL_LIB_SSL
       NAMES
         ssleay32
       PATHS
         ${OPENSSL_ROOT_DIR}/lib
         ${OPENSSL_ROOT_DIR}/lib/VC
     )
-    MARK_AS_ADVANCED(SSL_EAY LIB_EAY)
+    MARK_AS_ADVANCED(OPENSSL_LIB_SSL OPENSSL_LIB_CRYPTO)
 
-    SET( OPENSSL_LIBRARIES ${SSL_EAY} ${LIB_EAY} )
+    SET( OPENSSL_LIBRARIES ${OPENSSL_LIB_SSL} ${OPENSSL_LIB_CRYPTO} )
   ENDIF(MSVC)
 ELSE(WIN32 AND NOT CYGWIN)
-  FIND_LIBRARY(OPENSSL_SSL_LIBRARIES NAMES ssl ssleay32 ssleay32MD PATHS
-    /usr/lib
-    /usr/lib/x86_64-linux-gnu
-  )
-  FIND_LIBRARY(OPENSSL_CRYPTO_LIBRARIES NAMES crypto PATHS
-    /usr/lib
-    /usr/lib/x86_64-linux-gnu
-  )
+  FIND_LIBRARY(OPENSSL_SSL_LIBRARIES NAMES ssl ssleay32 ssleay32MD)
+  FIND_LIBRARY(OPENSSL_CRYPTO_LIBRARIES NAMES crypto)
   MARK_AS_ADVANCED(OPENSSL_CRYPTO_LIBRARIES OPENSSL_SSL_LIBRARIES)
 
   SET(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARIES})
@@ -192,7 +194,7 @@ if (OPENSSL_INCLUDE_DIR)
     set(OPENSSL_VERSION "${_OPENSSL_VERSION}")
   else (_OPENSSL_VERSION)
     file(STRINGS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h" openssl_version_str
-         REGEX "^# *define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x[0-9][0-9][0-9][0-9][0-9][0-9].*")
+         REGEX "^.*define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x[0-9][0-9][0-9][0-9][0-9][0-9].*")
 
     # The version number is encoded as 0xMNNFFPPS: major minor fix patch status
     # The status gives if this is a developer or prerelease and is ignored here.
@@ -201,28 +203,24 @@ if (OPENSSL_INCLUDE_DIR)
     # indicates the bug fix state, which 00 -> nothing, 01 -> a, 02 -> b and so
     # on.
 
-    string(REGEX REPLACE "^.*OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f]).*$"
-           "\\1;\\2;\\3;\\4;\\5" OPENSSL_VERSION_LIST "${openssl_version_str}")
-    list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
-    list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
-    list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
-    list(GET OPENSSL_VERSION_LIST 3 OPENSSL_VERSION_PATCH)
+    #string(REGEX REPLACE "^.*OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f]).*$"
+    #       "\\1;\\2;\\3;\\4;\\5" OPENSSL_VERSION_LIST "${openssl_version_str}")
+    #list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
+    #list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
+    #list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
+    #list(GET OPENSSL_VERSION_LIST 3 OPENSSL_VERSION_PATCH)
 
-    string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_MINOR "${OPENSSL_VERSION_MINOR}")
-    string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_FIX "${OPENSSL_VERSION_FIX}")
+    #string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_MINOR "${OPENSSL_VERSION_MINOR}")
+    #string(REGEX REPLACE "^0(.)" "\\1" OPENSSL_VERSION_FIX "${OPENSSL_VERSION_FIX}")
 
-    if (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
-      # 96 is the ASCII code of 'a' minus 1
-      math(EXPR OPENSSL_VERSION_PATCH_ASCII "${OPENSSL_VERSION_PATCH} + 96")
-      # Once anyone knows how OpenSSL would call the patch versions beyond 'z'
-      # this should be updated to handle that, too. This has not happened yet
-      # so it is simply ignored here for now.
-      string(ASCII "${OPENSSL_VERSION_PATCH_ASCII}" OPENSSL_VERSION_PATCH_STRING)
-    endif (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
-
-    set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH_STRING}")
+    #set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH_STRING}")
   endif (_OPENSSL_VERSION)
 
+  #include(EnsureVersion)
+  #ENSURE_VERSION( "${OPENSSL_EXPECTED_VERSION}" "${OPENSSL_VERSION}" OPENSSL_VERSION_OK)
+  #if (NOT OPENSSL_VERSION_OK)
+      #message(FATAL_ERROR "SkyFire needs OpenSSL version ${OPENSSL_EXPECTED_VERSION} but found version ${OPENSSL_VERSION}")
+  #endif()
 endif (OPENSSL_INCLUDE_DIR)
 
 MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
