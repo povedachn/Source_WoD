@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///  MILLENIUM-STUDIO
-///  Copyright 2015 Millenium-studio SARL
+///  Inna Hoover Brown-STUDIO
+///  Copyright 2015 Inna Hoover Brown-STUDIO SARL
 ///  All Rights Reserved.
 ///  Coded By davethebrave
 ///

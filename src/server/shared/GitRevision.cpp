@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  MILLENIUM-STUDIO
-//  Copyright 2016 Millenium-studio SARL
+//  Inna Hoover Brown-STUDIO
+//  Copyright 2023 Inna Hoover Brown-studio SARL
 //  All Rights Reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ char const* GitRevision::GetFullDatabase()
     return _FULL_DATABASE;
 }
 
-#define _PACKAGENAME "Firestorm WoDCore"
+#define _PACKAGENAME "WoW-NeMeSiS Core"
 
 char const* GitRevision::GetFullVersion()
 {

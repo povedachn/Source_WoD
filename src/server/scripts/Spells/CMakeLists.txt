@@ -1,6 +1,6 @@
 #
-#  MILLENIUM-STUDIO
-#  Copyright 2016 Millenium-studio SARL
+#  Inna Hoover Brown-STUDIO
+#  Copyright 2023 Inna Hoover Brown-studio SARL
 #  All Rights Reserved.
 #
 
